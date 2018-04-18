@@ -1,0 +1,35 @@
+<resources>
+    <string name="app_name">Discover+</string>
+    <string name="welcome">Welcome to Discover+</string>
+    <string name="zID">zID</string>
+    <string name="password">password</string>
+    <string name="forgotPassword">forgot password?</string>
+    <string name="login">Login</string>
+    <string name="signUp">Sign up</string>
+    <string name="fullName">full name</string>
+    <string name="email">e-mail</string>
+    <string name="verifyPassword">verify password</string>
+    <string name="studyField">study field</string>
+    <string name="member">member</string>
+    <string name="executives">executives</string>
+
+    <string name="bio">BIO</string>
+    <string name="writeBio">Write your bio here...</string>
+    <string name="add">add</string>
+    <string name="likes">Likes</string>
+    <string name="edit">edit</string>
+    <string name="more">More</string>
+    <string name="society">Society</string>
+
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="search">Search</string>
+    <string name="join">Join</string>
+    <string name="joined">Joined</string>
+    <string name="viewAdmin">View admins</string>
+    <string name="membersJoined">Members joined</string>
+    <string name="upcomingEvents">Upcoming Events</string>
+    <string name="noEvent">There are no event to show</string>
+
+
+</resources>

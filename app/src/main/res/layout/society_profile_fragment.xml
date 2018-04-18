@@ -1,0 +1,337 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/userProfileLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorBackgroundGrey"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:background="@drawable/main_gradient_bg_color">
+
+            <ImageView
+                android:id="@+id/societyImageView"
+                android:layout_width="108dp"
+                android:layout_height="108dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/transparent_button_background_white_stroke_round"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/shortSocietyNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:gravity="center"
+                android:textColor="@color/colorWhite"
+                android:textSize="@dimen/header_text_size"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/societyImageView" />
+
+            <TextView
+                android:id="@+id/societyNameTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/text_margin"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="0dp"
+                android:gravity="center"
+                android:textColor="@color/colorWhite"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/shortSocietyNameTextView" />
+
+        </android.support.constraint.ConstraintLayout>
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="@dimen/background_layout_margin"
+            android:layout_marginLeft="@dimen/background_layout_margin"
+            android:layout_marginRight="@dimen/background_layout_margin"
+            android:background="@color/colorTransparent"
+            android:fillViewport="true"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorWhite"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/societyWebsiteImageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/edit_text_larger_padding"
+                        android:background="@color/colorTransparent"
+                        android:src="@drawable/website_icon" />
+
+                    <ImageButton
+                        android:id="@+id/societyEmailImageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/edit_text_larger_padding"
+                        android:background="@color/colorTransparent"
+                        android:src="@drawable/email_icon" />
+
+                    <ImageButton
+                        android:id="@+id/societyFacebookImageButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/edit_text_larger_padding"
+                        android:background="@color/colorTransparent"
+                        android:src="@drawable/facebook_icon" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/background_layout_margin"
+                    android:layout_marginRight="@dimen/background_layout_margin"
+                    android:background="@drawable/layout_shadow"
+                    android:elevation="@dimen/elevation_shadow"
+                    android:orientation="horizontal">
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/box_height"
+                        android:layout_margin="@dimen/edit_text_padding"
+                        android:background="@color/colorWhite"
+                        android:fillViewport="true"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/societyDescriptionTextView"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content" />
+                    </ScrollView>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginLeft="@dimen/background_layout_margin"
+                    android:layout_marginRight="@dimen/background_layout_margin"
+                    android:layout_marginTop="@dimen/background_layout_margin"
+                    android:background="@drawable/layout_shadow"
+                    android:elevation="@dimen/elevation_shadow"
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/societyMemberNoTextView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:paddingBottom="@dimen/edit_text_padding"
+                            android:paddingTop="@dimen/edit_text_padding"
+                            android:textAllCaps="true"
+                            android:textColor="@color/colorPeach"
+                            android:textSize="@dimen/header_text_size"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_margin="@dimen/button_margin"
+                            android:background="@color/colorTransparent"
+                            android:text="@string/membersJoined"
+                            android:textColor="@color/colorDarkGrey"
+                            android:textSize="@dimen/small_button_text_size" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginBottom="@dimen/line_margin"
+                        android:layout_marginTop="@dimen/line_margin"
+                        android:background="@android:color/darker_gray" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/edit_text_padding"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                        <Button
+                            android:id="@+id/societyJoinButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:background="@drawable/transparent_button_background_peach_stroke"
+                            android:elevation="@dimen/elevation_small_shadow"
+                            android:gravity="center"
+                            android:text="@string/join"
+                            android:textColor="@color/colorPeach" />
+
+                        <Button
+                            android:id="@+id/societyViewAdminButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="35dp"
+                            android:layout_margin="@dimen/edit_text_padding"
+                            android:background="@drawable/transparent_button_background_white_stroke_round"
+                            android:elevation="@dimen/elevation_small_shadow"
+                            android:gravity="center"
+                            android:paddingHorizontal="@dimen/edit_text_larger_padding"
+                            android:text="@string/viewAdmin"
+                            android:textColor="@color/colorPeach" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/background_layout_margin"
+                    android:background="@drawable/layout_shadow"
+                    android:elevation="@dimen/elevation_shadow"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginHorizontal="@dimen/layout_margin"
+                        android:layout_marginTop="@dimen/layout_margin"
+                        android:text="@string/upcomingEvents"
+                        android:textColor="@color/colorDarkGrey"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/societyNoEventTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginHorizontal="@dimen/layout_margin"
+                        android:layout_marginTop="@dimen/layout_margin"
+                        android:text="@string/noEvent" />
+
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_margin="@dimen/layout_margin">
+
+                        <LinearLayout
+                            android:id="@+id/societyUpcomingEventLayout"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:orientation="horizontal">
+
+                            <LinearLayout
+                                android:layout_width="70dp"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/layout_margin"
+                                android:background="@color/colorPeach"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/societyEventMonthTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:paddingTop="@dimen/button_small_margin"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorWhite"
+                                    android:textSize="@dimen/header_text_size"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/societyEventDateTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:paddingTop="@dimen/button_small_margin"
+                                    android:textColor="@color/colorWhite"
+                                    android:textSize="@dimen/big_header_text_size" />
+
+                                <TextView
+                                    android:id="@+id/societyEventDayTextView"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_gravity="center"
+                                    android:background="@color/colorGrey"
+                                    android:paddingTop="@dimen/button_small_margin"
+                                    android:textAllCaps="true"
+                                    android:textColor="@color/colorWhite" />
+
+                            </LinearLayout>
+
+                            <View
+                                android:layout_width="1dp"
+                                android:layout_height="match_parent"
+                                android:layout_marginBottom="@dimen/line_margin"
+                                android:layout_marginTop="@dimen/line_margin"
+                                android:background="@android:color/darker_gray" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_margin="@dimen/layout_margin"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:id="@+id/societyEventNameTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="@dimen/edit_text_larger_padding"
+                                    android:layout_marginTop="@dimen/edit_text_larger_padding"
+                                    android:textColor="@color/colorBlack"
+                                    android:textSize="@dimen/header_text_size"
+                                    android:textStyle="bold" />
+
+                                <TextView
+                                    android:id="@+id/societyEventSocietyNameTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="@dimen/edit_text_larger_padding"
+                                    android:textColor="@color/colorBlack" />
+
+                                <TextView
+                                    android:id="@+id/societyEventLocationTextView"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginHorizontal="@dimen/edit_text_larger_padding" />
+                            </LinearLayout>
+                        </LinearLayout>
+                    </ScrollView>
+
+                </LinearLayout>
+
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>
