@@ -139,7 +139,7 @@
                         android:layout_marginTop="@dimen/line_margin"
                         android:background="@android:color/darker_gray" />
 
-                    <ScrollView
+                    <android.support.v4.widget.NestedScrollView
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/box_height"
                         android:layout_margin="@dimen/edit_text_padding"
@@ -151,7 +151,7 @@
                             android:id="@+id/bioDetailTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content" />
-                    </ScrollView>
+                    </android.support.v4.widget.NestedScrollView>
                 </LinearLayout>
 
 
@@ -208,8 +208,7 @@
                         android:layout_alignParentLeft="true"
                         android:alignmentMode="alignMargins"
                         android:gravity="center_horizontal"
-                        android:numColumns="2">
-                    </GridView>
+                        android:numColumns="2"></GridView>
 
                 </LinearLayout>
 
@@ -295,26 +294,11 @@
                         android:layout_marginTop="@dimen/line_margin"
                         android:background="@android:color/darker_gray" />
 
-                    <LinearLayout
+                    <ListView
+                        android:id="@+id/userJoinedSocListView"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="@dimen/layout_margin"
-                        android:layout_marginRight="@dimen/layout_margin"
-                        android:layout_marginTop="@dimen/layout_margin"
-                        android:orientation="vertical">
+                        android:layout_height="wrap_content"></ListView>
 
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="@dimen/layout_margin"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:id="@+id/societyIconImageView"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
-                        </LinearLayout>
-                    </LinearLayout>
                 </LinearLayout>
             </LinearLayout>
         </ScrollView>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
@@ -121,19 +122,18 @@
                     android:elevation="@dimen/elevation_shadow"
                     android:orientation="horizontal">
 
-                    <ScrollView
+                    <android.support.v4.widget.NestedScrollView
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/box_height"
                         android:layout_margin="@dimen/edit_text_padding"
                         android:background="@color/colorWhite"
-                        android:fillViewport="true"
-                        android:orientation="vertical">
+                        android:fillViewport="true">
 
                         <TextView
                             android:id="@+id/societyDescriptionTextView"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content" />
-                    </ScrollView>
+                    </android.support.v4.widget.NestedScrollView>
                 </LinearLayout>
 
                 <LinearLayout
@@ -158,12 +158,12 @@
                             android:id="@+id/societyMemberNoTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_gravity="center"
+                            android:textAlignment="center"
                             android:paddingBottom="@dimen/edit_text_padding"
                             android:paddingTop="@dimen/edit_text_padding"
                             android:textAllCaps="true"
                             android:textColor="@color/colorPeach"
-                            android:textSize="@dimen/header_text_size"
+                            android:textSize="@dimen/big_header_text_size"
                             android:textStyle="bold" />
 
                         <TextView
@@ -172,6 +172,7 @@
                             android:layout_margin="@dimen/button_margin"
                             android:background="@color/colorTransparent"
                             android:text="@string/membersJoined"
+                            android:textAlignment="center"
                             android:textColor="@color/colorDarkGrey"
                             android:textSize="@dimen/small_button_text_size" />
                     </LinearLayout>
@@ -239,95 +240,18 @@
                         android:layout_marginTop="@dimen/layout_margin"
                         android:text="@string/noEvent" />
 
-                    <ScrollView
+                    <android.support.v4.widget.NestedScrollView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="@dimen/layout_margin">
 
-                        <LinearLayout
-                            android:id="@+id/societyUpcomingEventLayout"
+                        <ListView
+                            android:id="@+id/eventListView"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:orientation="horizontal">
-
-                            <LinearLayout
-                                android:layout_width="70dp"
-                                android:layout_height="wrap_content"
-                                android:layout_margin="@dimen/layout_margin"
-                                android:background="@color/colorPeach"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/societyEventMonthTextView"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center"
-                                    android:paddingTop="@dimen/button_small_margin"
-                                    android:textAllCaps="true"
-                                    android:textColor="@color/colorWhite"
-                                    android:textSize="@dimen/header_text_size"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:id="@+id/societyEventDateTextView"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center"
-                                    android:paddingTop="@dimen/button_small_margin"
-                                    android:textColor="@color/colorWhite"
-                                    android:textSize="@dimen/big_header_text_size" />
-
-                                <TextView
-                                    android:id="@+id/societyEventDayTextView"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_gravity="center"
-                                    android:background="@color/colorGrey"
-                                    android:paddingTop="@dimen/button_small_margin"
-                                    android:textAllCaps="true"
-                                    android:textColor="@color/colorWhite" />
-
-                            </LinearLayout>
-
-                            <View
-                                android:layout_width="1dp"
-                                android:layout_height="match_parent"
-                                android:layout_marginBottom="@dimen/line_margin"
-                                android:layout_marginTop="@dimen/line_margin"
-                                android:background="@android:color/darker_gray" />
-
-                            <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="match_parent"
-                                android:layout_margin="@dimen/layout_margin"
-                                android:orientation="vertical">
-
-                                <TextView
-                                    android:id="@+id/societyEventNameTextView"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginHorizontal="@dimen/edit_text_larger_padding"
-                                    android:layout_marginTop="@dimen/edit_text_larger_padding"
-                                    android:textColor="@color/colorBlack"
-                                    android:textSize="@dimen/header_text_size"
-                                    android:textStyle="bold" />
-
-                                <TextView
-                                    android:id="@+id/societyEventSocietyNameTextView"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginHorizontal="@dimen/edit_text_larger_padding"
-                                    android:textColor="@color/colorBlack" />
-
-                                <TextView
-                                    android:id="@+id/societyEventLocationTextView"
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:layout_marginHorizontal="@dimen/edit_text_larger_padding" />
-                            </LinearLayout>
-                        </LinearLayout>
-                    </ScrollView>
-
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1">
+                        </ListView>
+                    </android.support.v4.widget.NestedScrollView>
                 </LinearLayout>
 
 

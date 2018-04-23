@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
+import infs3611.discover.Activity.Fragment.DiscoverSocFragment;
 import infs3611.discover.Activity.Fragment.UserProfileFragment;
 import infs3611.discover.R;
 
@@ -69,7 +70,7 @@ public class UserActivity extends AppCompatActivity {
                         fragment = new UserProfileFragment();
                         break;
                     case 1:
-//                        fragment = new UserProfileFragment();
+                        fragment = new DiscoverSocFragment();
                         break;
                 }
                 performTransaction();

@@ -23,7 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/communication/ic_mail_outline_black_24dp.xml" />
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/toggle/ic_star_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -33,9 +33,10 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\June\Desktop\UNSW\sem 4\INFS3611\Project 1\websiteIcon.png" />
-                                      <entry key="outputName" value="website_icon" />
+                                      <entry key="imageAsset" value="C:\Users\June\Desktop\UNSW\sem 4\INFS3611\Project 1\148781.png" />
+                                      <entry key="outputName" value="favourite_icon" />
+                                      <entry key="theme" value="CUSTOM" />
+                                      <entry key="themeColor" value="ffd500" />
                                     </map>
                                   </option>
                                 </PersistentState>

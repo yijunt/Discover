@@ -7,7 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.FragmentTransaction;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +19,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.Spinner;
 import android.widget.TableLayout;
@@ -51,7 +52,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private FirebaseFirestore firebaseFirestore;
     private LinearLayout linearLayout;
     private ImageView profilePic;
-    private String[] likesArrayString;
+    private String[] likesArrayString, socArrayString;
     private TextView userNameTextView, studyFieldTextView, execPositionTextView, bioTextFieldTextView;
     private Button editBioButton, editLikesButton;
     private PopupWindow bioDialog, likesDialog, searchLikesDialog;
@@ -67,14 +68,20 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private String chosenLikesHeader, chosenBodyHeader;
     private List<String> likesEditStringList = new ArrayList<>();
     private List<String> likesStringList = new ArrayList<>();
+    private List<String> socStringList = new ArrayList<>();
     private ArrayAdapter<String> editGridViewArrayAdapter, gridViewArrayAdapter;
     private Context likesContext;
-    public UserProfileFragment() { }
+    private Fragment socFragment;
+
+    public UserProfileFragment() {
+    }
+
+    private ListView socListView;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.user_profile_fragment,container,false);
+        return inflater.inflate(R.layout.user_profile_fragment, container, false);
 
     }
 
@@ -92,6 +99,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         likesGridView = view.findViewById(R.id.likesGridView);
         editLikesButton = view.findViewById(R.id.likesEditButton);
         userProfileLayout = view.findViewById(R.id.userProfileLayout);
+        socListView = view.findViewById(R.id.userJoinedSocListView);
     }
 
     @Override
@@ -129,10 +137,40 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
                 showUserBio(documentSnapshot.get("bio"));
                 showUserLikes(documentSnapshot.get("likes"));
-
+                showUserJoinedSoc(documentSnapshot.get("joinedSociety"));
             }
         });
 
+    }
+
+    private void showUserJoinedSoc(Object socObject) {
+        if (socObject != null) {
+            String socString = socObject.toString();
+            socString = socString.replace("[", "");
+            socString = socString.replace("]", "");
+            socArrayString = socString.split(",");
+
+            socStringList = new ArrayList<String>(Arrays.asList(socArrayString));
+
+            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, socStringList);
+            socListView.setAdapter(adapter);
+            socListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    String itemValue = (String) socListView.getItemAtPosition(position);
+
+                    socFragment = new SocietyProfileFragment();
+                    Bundle arguments = new Bundle();
+                    arguments.putString("selectedSocName", itemValue);
+                    socFragment.setArguments(arguments);
+
+                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                    transaction.replace(R.id.simpleFrameLayout, socFragment);
+                    transaction.addToBackStack(null);
+                    transaction.commit();
+                }
+            });
+        }
     }
 
     private void showUserBio(Object bioObject) {
@@ -293,13 +331,13 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
                 likesStringList = likesEditStringList;
                 firebaseFirestore.collection("Users").document(userId)
-                        .update("likes",likesStringList).
+                        .update("likes", likesStringList).
                         addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
 
-                    }
-                });
+                            }
+                        });
                 gridViewArrayAdapter.notifyDataSetChanged();
                 likesDialog.dismiss();
             }
