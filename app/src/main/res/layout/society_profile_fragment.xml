@@ -158,9 +158,9 @@
                             android:id="@+id/societyMemberNoTextView"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:textAlignment="center"
                             android:paddingBottom="@dimen/edit_text_padding"
                             android:paddingTop="@dimen/edit_text_padding"
+                            android:textAlignment="center"
                             android:textAllCaps="true"
                             android:textColor="@color/colorPeach"
                             android:textSize="@dimen/big_header_text_size"
@@ -240,18 +240,13 @@
                         android:layout_marginTop="@dimen/layout_margin"
                         android:text="@string/noEvent" />
 
-                    <android.support.v4.widget.NestedScrollView
+                    <ListView
+                        android:id="@+id/eventListView"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="@dimen/layout_margin">
-
-                        <ListView
-                            android:id="@+id/eventListView"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1">
-                        </ListView>
-                    </android.support.v4.widget.NestedScrollView>
+                        android:layout_height="0dip"
+                        android:nestedScrollingEnabled="true"
+                        android:layout_weight="1"
+                        android:fillViewport="true"></ListView>
                 </LinearLayout>
 
 

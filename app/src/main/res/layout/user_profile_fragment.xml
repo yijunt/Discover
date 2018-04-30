@@ -28,6 +28,8 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="7dp"
                 android:background="@drawable/transparent_button_background_white_stroke_round"
+                android:scaleType="fitXY"
+                android:src="@drawable/profile_picture"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -92,7 +94,6 @@
                 android:layout_height="wrap_content"
                 android:background="@color/colorWhite"
                 android:orientation="vertical">
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -222,6 +223,7 @@
                     android:background="@drawable/layout_shadow"
                     android:elevation="@dimen/elevation_shadow"
                     android:orientation="horizontal"
+                    android:visibility="invisible"
                     android:weightSum="1">
 
                     <TextView
@@ -259,8 +261,15 @@
 
                             <ImageView
                                 android:id="@+id/execSocietyIconImageView"
+                                android:layout_width="50dp"
+                                android:layout_height="50dp" />
+
+                            <TextView
+                                android:id="@+id/execSocNameTextView"
                                 android:layout_width="wrap_content"
-                                android:layout_height="wrap_content" />
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/layout_margin"
+                                android:textColor="@color/colorBlack" />
                         </LinearLayout>
                     </LinearLayout>
 

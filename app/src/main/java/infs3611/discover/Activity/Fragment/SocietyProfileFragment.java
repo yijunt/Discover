@@ -28,6 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import infs3611.discover.Activity.Adapter.SocEventAdapter;
 import infs3611.discover.R;
@@ -128,7 +129,7 @@ public class SocietyProfileFragment extends Fragment implements View.OnClickList
                     emailLink = emailLink.substring(emailInt + 1);
 
                 }
-                if(documentSnapshot.get("profilePic") != null) {
+                if (documentSnapshot.get("profilePic") != null) {
                     //TODO: set profile pic
                 }
 
@@ -142,13 +143,15 @@ public class SocietyProfileFragment extends Fragment implements View.OnClickList
 
     private void showUpcomingEvents(Object eventObject, String socName) {
 
-        HashMap<String, String> eventSplitMap = new HashMap<>();
         String likesString = eventObject.toString();
         likesString = likesString.replace("[", "");
-        eventArrayString = likesString.split("]");
+        likesString = likesString.replace("]", "");
+        eventArrayString = likesString.split(Pattern.quote("},"));
 
         ArrayList<HashMap<String, String>> eventFinalList = new ArrayList<HashMap<String, String>>();
         eventStringList = new ArrayList<String>(Arrays.asList(eventArrayString));
+        eventListAdapter = new SocEventAdapter(context, eventFinalList, socName);
+        eventListView.setAdapter(eventListAdapter);
         for (String object : eventStringList) {
             String[] eventStringArray;
             String eventInfo = object;
@@ -156,6 +159,7 @@ public class SocietyProfileFragment extends Fragment implements View.OnClickList
             eventInfo = eventInfo.replace("}", "");
             eventStringArray = eventInfo.split(",");
 
+            HashMap<String, String> eventSplitMap = new HashMap<>();
             for (String moreObject : eventStringArray) {
                 int cutAt = moreObject.indexOf("=");
                 String key = moreObject.substring(0, cutAt);
@@ -165,11 +169,6 @@ public class SocietyProfileFragment extends Fragment implements View.OnClickList
             }
             eventFinalList.add(eventSplitMap);
         }
-
-        eventListAdapter = new SocEventAdapter(context, eventFinalList, socName);
-        eventListView.setAdapter(eventListAdapter);
-        eventListAdapter.notifyDataSetChanged();
-
         eventListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
             @Override
@@ -214,7 +213,7 @@ public class SocietyProfileFragment extends Fragment implements View.OnClickList
 
         } else if (v == emailImageButton) {
             Intent intent = new Intent(Intent.ACTION_SENDTO, Uri.fromParts(
-                    "mailto",emailLink, null));
+                    "mailto", emailLink, null));
             startActivity(intent);
 
         } else if (v == facebookImageButton) {

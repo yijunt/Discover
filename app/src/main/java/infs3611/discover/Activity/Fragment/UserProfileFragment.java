@@ -2,6 +2,7 @@ package infs3611.discover.Activity.Fragment;
 
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,7 +27,10 @@ import android.widget.TableLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -34,6 +38,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,6 +47,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import infs3611.discover.Activity.Adapter.SocietyAdapter;
+import infs3611.discover.Activity.RoundedCornersTransformation;
 import infs3611.discover.R;
 
 import static android.content.Context.LAYOUT_INFLATER_SERVICE;
@@ -68,15 +76,17 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private String chosenLikesHeader, chosenBodyHeader;
     private List<String> likesEditStringList = new ArrayList<>();
     private List<String> likesStringList = new ArrayList<>();
-    private List<String> socStringList = new ArrayList<>();
+    private ArrayList<String> socStringList = new ArrayList<>();
     private ArrayAdapter<String> editGridViewArrayAdapter, gridViewArrayAdapter;
     private Context likesContext;
     private Fragment socFragment;
+    private ListView socListView;
+    private ArrayAdapter socListAdapter;
+
+    public static String USER_NAME;
 
     public UserProfileFragment() {
     }
-
-    private ListView socListView;
 
     @Nullable
     @Override
@@ -128,6 +138,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                 }
 
                 name = documentSnapshot.get("name");
+                USER_NAME = name.toString();
                 studyField = documentSnapshot.get("studyField");
 
                 if (name != null && studyField != null) {
@@ -138,6 +149,21 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                 showUserBio(documentSnapshot.get("bio"));
                 showUserLikes(documentSnapshot.get("likes"));
                 showUserJoinedSoc(documentSnapshot.get("joinedSociety"));
+            }
+        });
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        storageReference.child("User Profile Picture/" + userId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Toast.makeText(getContext(), "Download Image Finished...", Toast.LENGTH_SHORT).show();
+
+                Glide.with(context.getApplicationContext()).load(uri.toString()).bitmapTransform(new RoundedCornersTransformation( getContext(),250, 10)).into(profilePic);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), "Download Image Failed...", Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -153,7 +179,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             socStringList = new ArrayList<String>(Arrays.asList(socArrayString));
 
             final ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, socStringList);
-            socListView.setAdapter(adapter);
+            socListAdapter = new SocietyAdapter(getContext(), socStringList);
+            socListView.setAdapter(socListAdapter);
+//            socListView.setAdapter(adapter);
             socListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -231,6 +259,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                     String likesString = likesArray.toString();
                     likesString = likesString.replace("[", "");
                     likesString = likesString.replace("]", "");
+                    likesString = likesString.replace(", ", ",");
                     String[] likesArrayStringUnsaved = likesString.split(",");
 
                     likesEditStringList = new ArrayList<String>(Arrays.asList(likesArrayStringUnsaved));
@@ -310,7 +339,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                 likesSearchAddButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        likesEditStringList.add(chosenBodyHeader);
+                        //TODO: check if user alreaady have that hobby!
+
+                        likesEditStringList.add(chosenBodyHeader.trim());
                         editGridViewArrayAdapter.notifyDataSetChanged();
                         searchLikesDialog.dismiss();
                     }
@@ -330,12 +361,10 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             public void onClick(View v) {
 
                 likesStringList = likesEditStringList;
-                firebaseFirestore.collection("Users").document(userId)
-                        .update("likes", likesStringList).
+                firebaseFirestore.collection("Users").document(userId).update("likes", likesStringList).
                         addOnCompleteListener(new OnCompleteListener<Void>() {
                             @Override
                             public void onComplete(@NonNull Task<Void> task) {
-
                             }
                         });
                 gridViewArrayAdapter.notifyDataSetChanged();

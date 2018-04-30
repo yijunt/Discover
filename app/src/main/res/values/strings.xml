@@ -22,6 +22,14 @@
     <string name="more">More</string>
     <string name="society">Society</string>
     <string name="match">Match</string>
+    <string name="addHobbies">Add Hobbies</string>
+    <string name="home">Home</string>
+    <string name="message">Messages</string>
+
+    <string name="account">Account</string>
+    <string name="changePhoto">Change Photo</string>
+    <string name="changePassword">Change Password</string>
+    <string name="logout">Log out</string>
 
     <string name="save">Save</string>
     <string name="cancel">Cancel</string>

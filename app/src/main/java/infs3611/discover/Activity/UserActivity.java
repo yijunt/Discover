@@ -10,13 +10,16 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.FrameLayout;
 
 import infs3611.discover.Activity.Fragment.DiscoverSocFragment;
+import infs3611.discover.Activity.Fragment.EventListFragment;
+import infs3611.discover.Activity.Fragment.MessageFragment;
+import infs3611.discover.Activity.Fragment.MoreFragment;
 import infs3611.discover.Activity.Fragment.UserProfileFragment;
 import infs3611.discover.R;
 
 public class UserActivity extends AppCompatActivity {
 
     FrameLayout frameLayout;
-    TabLayout tabLayout;
+    public static TabLayout tabLayout;
     Fragment fragment;
 
     @Override
@@ -71,6 +74,15 @@ public class UserActivity extends AppCompatActivity {
                         break;
                     case 1:
                         fragment = new DiscoverSocFragment();
+                        break;
+                    case 2:
+                        fragment = new EventListFragment();
+                        break;
+                    case 3:
+                        fragment = new MessageFragment();
+                        break;
+                    case 4:
+                        fragment = new MoreFragment();
                         break;
                 }
                 performTransaction();

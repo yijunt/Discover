@@ -1,15 +1,24 @@
 package infs3611.discover.Activity.Fragment;
 
+import android.app.TabActivity;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -23,9 +32,11 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
+import infs3611.discover.Activity.UserActivity;
 import infs3611.discover.R;
 
 import static android.content.ContentValues.TAG;
@@ -39,7 +50,13 @@ public class MatchSocFragment extends Fragment implements View.OnClickListener {
     private String[] userLikesArray;
     private Object userLikes;
     private FirebaseFirestore firebaseFirestore;
-    private Map<Integer, String> allSocHashtagMap;
+    private HashMap<Integer, String> allSocHashtagMap = new HashMap<>();
+    private String socID, socIntro;
+    private boolean passFlag = true;
+    private ScrollView socDesScrollView;
+    private Button addHobbyButton;
+    private LinearLayout buttonsLinearLayout;
+    private int currentCount;
 
     @Nullable
     @Override
@@ -56,6 +73,9 @@ public class MatchSocFragment extends Fragment implements View.OnClickListener {
         passSocImageButton = view.findViewById(R.id.passSocImageButton);
         addSocImageButton = view.findViewById(R.id.addSocImageButton);
         favSocImageButton = view.findViewById(R.id.favouriteSocImageButton);
+        socDesScrollView = view.findViewById(R.id.socDescScrollView);
+        buttonsLinearLayout = view.findViewById(R.id.buttonsLinearLayout);
+        addHobbyButton = view.findViewById(R.id.addHobbiesButton);
     }
 
     @Override
@@ -76,7 +96,6 @@ public class MatchSocFragment extends Fragment implements View.OnClickListener {
                 }
             }
         });
-
         firebaseFirestore.collection("Society").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
@@ -91,70 +110,86 @@ public class MatchSocFragment extends Fragment implements View.OnClickListener {
                         String[] socHastagArray = socHastagString.split(",");
 
                         boolean matchFlag = false;
-
                         if (socHastagArray.length > userLikesArray.length) {
                             //userLikesArray shorter in length
                             for (String i : userLikesArray) {
                                 for (String j : socHastagArray) {
-                                    if (i.equalsIgnoreCase(j)) {
+                                    if (i.trim().equalsIgnoreCase(j)) {
                                         //get soc name
                                         matchSocName = document.getId();
                                         matchFlag = true;
                                         matchCounter++;
                                     }
                                 }
-
                             }
                         } else {
                             //socHastagArray shorter in length
                             for (String i : socHastagArray) {
                                 for (String j : userLikesArray) {
-                                    if (i.equalsIgnoreCase(j)) {
+                                    if (i.equalsIgnoreCase(j.trim())) {
                                         //get soc name
                                         matchSocName = document.getId();
                                         matchFlag = true;
                                         matchCounter++;
                                     }
                                 }
-
                             }
-
                         }
-                        if (matchFlag) {
+                        if (matchFlag && !allSocHashtagMap.containsValue(matchSocName)) {
                             allSocHashtagMap.put(matchCounter, matchSocName);
                         }
-                    }
-                    if(!allSocHashtagMap.isEmpty()) {
-                        //run all map and get soc picture and description in loop
-                        Iterator<Map.Entry<Integer, String>> iterator = allSocHashtagMap.entrySet().iterator();
-                        while (iterator.hasNext()) {
-                            Map.Entry<Integer, String> entry = iterator.next();
-                            Log.d("Society Map ->","Key : " + entry.getKey() + " Value :" + entry.getValue());
-                            //im lost...
-                        }
-
+                        putDataAsView();
                     }
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
-
             }
         });
 
+        passSocImageButton.setOnClickListener(this);
 
-        getUserLikes();
+    }
 
+    private void putDataAsView() {
+        currentCount++;
+        if (!allSocHashtagMap.isEmpty()) {
+            addHobbyButton.setVisibility(View.GONE);
+            socDesScrollView.setVisibility(View.VISIBLE);
+            buttonsLinearLayout.setVisibility(View.VISIBLE);
 
+            //put the latest map data in view, and pop it
+            firebaseFirestore.collection("Society").document(allSocHashtagMap.get(currentCount)).addSnapshotListener(new EventListener<DocumentSnapshot>() {
+                @Override
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                    socID = documentSnapshot.getId();
+                    socIntro = documentSnapshot.get("intro").toString();
+                    socDescTextView.setText(socIntro);
+
+                    //set picture too...
+                }
+            });
+        } else {
+
+            addHobbyButton.setVisibility(View.VISIBLE);
+            socDesScrollView.setVisibility(View.GONE);
+            buttonsLinearLayout.setVisibility(View.GONE);
+            addHobbyButton.setOnClickListener(this);
+
+        }
     }
 
     @Override
     public void onClick(View v) {
 
-    }
+        if (v == passSocImageButton) {
+            allSocHashtagMap.remove(currentCount);
+            putDataAsView();
+        } else if (v == addHobbyButton) {
 
-
-    private void getUserLikes() {
-
-
+            //return to userProfile page
+            TabLayout tabLayout = UserActivity.tabLayout;
+            TabLayout.Tab tab = tabLayout.getTabAt(0);
+            tab.select();
+        }
     }
 }
