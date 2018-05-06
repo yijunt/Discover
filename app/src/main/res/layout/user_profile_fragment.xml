@@ -73,6 +73,7 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="0dp"
                 android:gravity="center"
+                android:textColor="@color/colorWhite"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/profileStudyTextView" />
@@ -227,16 +228,16 @@
                     android:weightSum="1">
 
                     <TextView
-                        android:layout_width="wrap_content"
+                        android:layout_width="91dp"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:paddingBottom="@dimen/edit_text_padding"
                         android:paddingLeft="@dimen/edit_text_larger_padding"
                         android:paddingRight="@dimen/edit_text_larger_padding"
                         android:paddingTop="@dimen/edit_text_padding"
-                        android:text="@string/society"
+                        android:text="Society In Charge"
                         android:textColor="@color/colorBlack"
-                        android:textSize="@dimen/header_text_size" />
+                        android:textSize="@dimen/text_size" />
 
                     <View
                         android:layout_width="1dp"
@@ -254,6 +255,7 @@
                         android:orientation="vertical">
 
                         <LinearLayout
+                            android:id="@+id/execSocLinearLayout"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:layout_margin="@dimen/layout_margin"

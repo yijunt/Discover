@@ -1,19 +1,17 @@
 package infs3611.discover.Activity.Fragment;
 
 import android.Manifest;
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -22,28 +20,25 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
 
 import infs3611.discover.Activity.MainActivity;
+import infs3611.discover.Activity.UserLoginActivity;
 import infs3611.discover.R;
 
 import static android.app.Activity.RESULT_OK;
-import static android.content.ContentValues.TAG;
+import static com.bumptech.glide.gifdecoder.GifHeaderParser.TAG;
 
 public class MoreFragment extends Fragment implements View.OnClickListener {
     private Button changePasswordButton, changePhotoButton, logoutButton;
@@ -51,6 +46,7 @@ public class MoreFragment extends Fragment implements View.OnClickListener {
     private StorageReference storageReference;
     private ProgressDialog progressDialog;
     String userUid;
+    private FirebaseAuth.AuthStateListener authStateListener;
     private Uri uri;
 
     @Nullable
@@ -74,11 +70,21 @@ public class MoreFragment extends Fragment implements View.OnClickListener {
         changePhotoButton.setOnClickListener(this);
         changePasswordButton.setOnClickListener(this);
         logoutButton.setOnClickListener(this);
+        setupFirebaseListener();
     }
 
     @Override
     public void onStart() {
         super.onStart();
+        FirebaseAuth.getInstance().addAuthStateListener(authStateListener);
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (authStateListener == null) {
+            FirebaseAuth.getInstance().removeAuthStateListener(authStateListener);
+        }
     }
 
     @Override
@@ -89,8 +95,25 @@ public class MoreFragment extends Fragment implements View.OnClickListener {
             verifyPermission();
 
         } else if (view == logoutButton) {
-
+            FirebaseAuth.getInstance().signOut();
         }
+    }
+
+    private void setupFirebaseListener() {
+        authStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    Log.d(TAG, "onAuthStateChanged: signed in" + user.getUid());
+                } else {
+                    Log.d(TAG, "onAuthStateChanged: signed out");
+                    Intent intent = new Intent(getActivity(), UserLoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                }
+            }
+        };
     }
 
     @Override

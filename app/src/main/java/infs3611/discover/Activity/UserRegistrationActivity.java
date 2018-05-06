@@ -2,18 +2,24 @@ package infs3611.discover.Activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupWindow;
 import android.widget.Spinner;
+import android.widget.TableLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,10 +30,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import infs3611.discover.R;
@@ -45,23 +55,36 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
 
     private CheckBox memberCheckBox;
     private CheckBox execCheckBox;
-
+    private int userType = 0;
     private Spinner studyFieldSpinner;
     private Spinner facultySpinner;
     private Spinner programSpinner;
+    private Spinner societySpinner, positionSpinner;
 
     private Button signUpButton;
+    private Button execSignUpButton, execCancelButton;
 
     private ProgressDialog progressDialog;
 
     private FirebaseAuth firebaseAuth;
+    private String getSocString;
     private DatabaseReference databaseReference;
 
+    private String email, password;
+
     private FirebaseFirestore firebaseFirestore;
-    public Map<String, Object> studyFieldMap;
-    public String chosenStudyField, chosenFaculty, chosenProgram;
+    private Map<String, Object> studyFieldMap;
+    private HashMap<String, ArrayList<String>> allSocPositiondMap = new HashMap<>();
+    private HashMap<String, Object> selectedSocPositionMap = new HashMap<>();
+    //    public List<String> allSocName = new ArrayList<>();
+    public String chosenStudyField, chosenFaculty, chosenProgram, chosenSoc, chosenSocPosition;
     public Object value;
-    ArrayAdapter studyArrayAdapter, facultyArrayAdapter, programArrayAdapter;
+    ArrayAdapter studyArrayAdapter, facultyArrayAdapter, programArrayAdapter, socArrayAdapter, socPositionArrayAdapter;
+    private String userId;
+
+    private PopupWindow societyPositionDialog;
+
+    private LinearLayout registrationLinearLayout;
 
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -89,6 +112,8 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
         studyFieldSpinner = findViewById(R.id.studyFieldSpinner);
         facultySpinner = findViewById(R.id.facultySpinner);
         programSpinner = findViewById(R.id.programSpinner);
+
+        registrationLinearLayout = findViewById(R.id.registrationLinearLayout);
 
         signUpButton = findViewById(R.id.signUpButton);
 
@@ -161,9 +186,9 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
         });
     }
 
-    private void registerUser() {
-        String email = emailEditText.getText().toString();
-        String password = passwordEditText.getText().toString();
+    private void checkValidation() {
+        email = emailEditText.getText().toString();
+        password = passwordEditText.getText().toString();
         String verifyPassword = verifyPasswordEditText.getText().toString();
 
         if (TextUtils.isEmpty(email)) {
@@ -173,6 +198,22 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
         }
 
         //check validations
+
+
+        if (memberCheckBox.isChecked()) {
+            userType = 1;
+        }
+        if (execCheckBox.isChecked()) {
+            userType = 2;
+        }
+        if (userType == 2) { //soc exec
+            showSocExecDialog();
+        } else if (userType == 1) {
+            registerUser();
+        }
+    }
+
+    private void registerUser() {
         //show progress bar if validations ok
         progressDialog.setMessage("Registering User...");
         progressDialog.show();
@@ -186,7 +227,6 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
                             //profile activity starts here
                             saveUserInformation();
                             progressDialog.dismiss();
-                            Toast.makeText(UserRegistrationActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
 
                         } else {
                             Toast.makeText(UserRegistrationActivity.this, "Error when register", Toast.LENGTH_SHORT).show();
@@ -209,8 +249,6 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
         facultyArrayAdapter = new ArrayAdapter(UserRegistrationActivity.this, android.R.layout.simple_spinner_dropdown_item, facultyArr);
         facultyArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         facultySpinner.setAdapter(facultyArrayAdapter);
-
-
     }
 
     private void insertProgramSpinner() {
@@ -227,56 +265,159 @@ public class UserRegistrationActivity extends AppCompatActivity implements View.
                 programSpinner.setAdapter(programArrayAdapter);
             }
         });
-
     }
 
     private void saveUserInformation() {
         String name = fullNameEditText.getText().toString();
         String zID = zIDEditText.getText().toString();
+        userId = firebaseAuth.getCurrentUser().getUid();
+        Map<String, Object> userMap = new HashMap<>();
+        userMap.put("name", name);
+        userMap.put("zID", zID);
+        userMap.put("studyField", chosenFaculty);
+        userMap.put("userType", userType);
 
-        int userType = 0;
-
-        if (memberCheckBox.isChecked()) {
-            userType = 1;
-        }
-        if (execCheckBox.isChecked()) {
-            userType = 2;
-        }
-
-        if (userType != 0) {
-
-            String userId = firebaseAuth.getCurrentUser().getUid();
-            Map<String, Object> userMap = new HashMap<>();
-            userMap.put("name", name);
-            userMap.put("zID", zID);
-            userMap.put("studyField", chosenFaculty);
-            userMap.put("userType", userType);
-
-            firebaseFirestore.collection("Users").document(userId).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+        if (userType == 2) {
+            userMap.put("execSoc", chosenSoc);
+            userMap.put("execSocPosition", chosenSocPosition);
+            firebaseFirestore.collection("Society").document(chosenSoc).addSnapshotListener(new EventListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        Toast.makeText(UserRegistrationActivity.this, "User Info Saved", Toast.LENGTH_SHORT).show();
+                public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
+                    selectedSocPositionMap = (HashMap<String, Object>) documentSnapshot.get("admin");
 
-                        Intent intent = new Intent(getBaseContext(), MainActivity.class);
-                        startActivity(intent);
+                    selectedSocPositionMap.put(chosenSocPosition, userId);
+                    firebaseFirestore.collection("Society").document(chosenSoc).update("admin",selectedSocPositionMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
 
-                    } else {
-                        String error = task.getException().getMessage();
-                        //TODO: Change Toast to log
-                        Toast.makeText(UserRegistrationActivity.this, "FIRESOTRE Error): " + error, Toast.LENGTH_SHORT).show();
-                    }
+                        }
+                    });
                 }
             });
-
         }
+
+        firebaseFirestore.collection("Users").document(userId).set(userMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    Toast.makeText(UserRegistrationActivity.this, "Registered Successfully", Toast.LENGTH_SHORT).show();
+
+                    Toast.makeText(UserRegistrationActivity.this, "User Info Saved", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                    startActivity(intent);
+
+                } else {
+                    String error = task.getException().getMessage();
+                    //TODO: Change Toast to log
+                    Toast.makeText(UserRegistrationActivity.this, "Firestore Error): " + error, Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
     }
 
+    private void showSocExecDialog() {
+
+        LayoutInflater inflater = (LayoutInflater) UserRegistrationActivity.this.getSystemService(LAYOUT_INFLATER_SERVICE);
+        View view = inflater.inflate(R.layout.popup_society_position, null);
+
+        societyPositionDialog = new PopupWindow(view, TableLayout.LayoutParams.WRAP_CONTENT, TableLayout.LayoutParams.WRAP_CONTENT, true);
+        societySpinner = view.findViewById(R.id.societySpinner);
+        positionSpinner = view.findViewById(R.id.positionSpinner);
+        execSignUpButton = view.findViewById(R.id.execSignUpButton);
+        execCancelButton = view.findViewById(R.id.execCancelButton);
+
+        // Call requires API level 21
+        if (Build.VERSION.SDK_INT >= 21) {
+            societyPositionDialog.setElevation(7.0f);
+        }
+
+        execSignUpButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (chosenSocPosition != null) {
+                    registerUser();
+                    societyPositionDialog.dismiss();
+                }
+            }
+        });
+
+        execCancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                societyPositionDialog.dismiss();
+            }
+        });
+        firebaseFirestore.collection("Society").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (final DocumentSnapshot document : task.getResult()) {
+                        ArrayList<String> socPositionList = new ArrayList<>();
+                        getSocString = document.getId();
+
+                        HashMap<String, String> socPositionMap = (HashMap<String, String>) document.get("admin");
+                        if (socPositionMap != null) {
+                            Iterator it = socPositionMap.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Map.Entry pair = (Map.Entry) it.next();
+                                if (pair.getValue().toString().isEmpty()) {
+                                    socPositionList.add(pair.getKey().toString());
+                                }
+                            }
+                        }
+                        if (!socPositionList.isEmpty()) {
+                            allSocPositiondMap.put(getSocString, socPositionList);
+                        }
+                    }
+                    setTheSpinner();
+                }
+            }
+        });
+    }
+
+    private void setTheSpinner() {
+        ArrayList<String> socArr = new ArrayList<>();
+        socArr.addAll(allSocPositiondMap.keySet());
+        socArrayAdapter = new ArrayAdapter(UserRegistrationActivity.this, android.R.layout.simple_spinner_dropdown_item, socArr);
+        socArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        societySpinner.setAdapter(socArrayAdapter);
+
+        societySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> socAdapterView, View view, int i, long l) {
+
+                chosenSoc = socAdapterView.getItemAtPosition(i).toString();
+                ArrayList<String> socPositionArrayString = allSocPositiondMap.get(chosenSoc);
+
+                socPositionArrayAdapter = new ArrayAdapter(UserRegistrationActivity.this, android.R.layout.simple_spinner_dropdown_item, socPositionArrayString);
+                socPositionArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                positionSpinner.setAdapter(socPositionArrayAdapter);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+
+        positionSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> socPositionAdapterView, View view, int i, long l) {
+                chosenSocPosition = socPositionAdapterView.getItemAtPosition(i).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> adapterView) {
+            }
+        });
+        societyPositionDialog.showAtLocation(registrationLinearLayout, Gravity.CENTER, 0, 0);
+    }
 
     @Override
     public void onClick(View view) {
         if (view == signUpButton) {
-            registerUser();
+            checkValidation();
         }
     }
+
 }

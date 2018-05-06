@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/popupLikesSearchLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/layout_shadow"
+    android:elevation="@dimen/elevation_shadow"
+    android:orientation="vertical"
+    android:padding="@dimen/edit_text_larger_padding">
+
+    <TextView
+        android:id="@+id/societyAndPosition"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/main_header_text_size"
+        android:gravity="center"
+        android:text="@string/societyAndPosition"
+        android:textColor="@color/colorBlack"
+        android:textSize="@dimen/big_header_text_size" />
+
+    <Spinner
+        android:id="@+id/societySpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/main_header_text_size"
+        android:padding="@dimen/edit_text_larger_padding"
+        android:spinnerMode="dropdown" />
+
+    <Spinner
+        android:id="@+id/positionSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/main_header_text_size"
+        android:padding="@dimen/edit_text_larger_padding"
+        android:spinnerMode="dropdown" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Button
+            android:id="@+id/execCancelButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/transparent_button_background_peach_stroke"
+            android:text="@string/cancel"
+            android:textColor="@color/colorPeach" />
+
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:layout_weight="1"></Space>
+
+        <Button
+            android:id="@+id/execSignUpButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/peach_button_with_corners"
+            android:text="@string/signUp"
+            android:textColor="@color/colorWhite" />
+    </LinearLayout>
+</LinearLayout>

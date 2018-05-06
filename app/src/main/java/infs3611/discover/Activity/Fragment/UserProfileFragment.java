@@ -58,10 +58,10 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private String userId;
     private Object userType, name, studyField, bioTextField, likesArray;
     private FirebaseFirestore firebaseFirestore;
-    private LinearLayout linearLayout;
-    private ImageView profilePic;
+    private LinearLayout linearLayout, execSocLinearLayout;
+    private ImageView profilePic, execSocImageView;
     private String[] likesArrayString, socArrayString;
-    private TextView userNameTextView, studyFieldTextView, execPositionTextView, bioTextFieldTextView;
+    private TextView userNameTextView, studyFieldTextView, execPositionTextView, bioTextFieldTextView, execSocNameTextView;
     private Button editBioButton, editLikesButton;
     private PopupWindow bioDialog, likesDialog, searchLikesDialog;
     private EditText bioEditText;
@@ -79,7 +79,7 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     private ArrayList<String> socStringList = new ArrayList<>();
     private ArrayAdapter<String> editGridViewArrayAdapter, gridViewArrayAdapter;
     private Context likesContext;
-    private Fragment socFragment;
+    private Fragment socFragment, execSocFragment;
     private ListView socListView;
     private ArrayAdapter socListAdapter;
 
@@ -92,7 +92,6 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.user_profile_fragment, container, false);
-
     }
 
     @Override
@@ -105,11 +104,14 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         studyFieldTextView = view.findViewById(R.id.profileStudyTextView);
         execPositionTextView = view.findViewById(R.id.profileMemberType);
         bioTextFieldTextView = view.findViewById(R.id.bioDetailTextView);
+        execSocImageView = view.findViewById(R.id.execSocietyIconImageView);
+        execSocNameTextView = view.findViewById(R.id.execSocNameTextView);
         editBioButton = view.findViewById(R.id.bioEditButton);
         likesGridView = view.findViewById(R.id.likesGridView);
         editLikesButton = view.findViewById(R.id.likesEditButton);
         userProfileLayout = view.findViewById(R.id.userProfileLayout);
         socListView = view.findViewById(R.id.userJoinedSocListView);
+        execSocLinearLayout = view.findViewById(R.id.execSocLinearLayout);
     }
 
     @Override
@@ -125,6 +127,14 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         userId = firebaseUser.getUid();
         firebaseFirestore = FirebaseFirestore.getInstance();
+
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        storageReference.child("User Profile Picture/" + userId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Glide.with(context.getApplicationContext()).load(uri.toString()).bitmapTransform(new RoundedCornersTransformation(getContext(), 250, 10)).into(profilePic);
+            }
+        });
         firebaseFirestore.collection("Users").document(userId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
             public void onEvent(DocumentSnapshot documentSnapshot, FirebaseFirestoreException e) {
@@ -134,7 +144,8 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                 if (userType.toString().equals("1")) {
                     linearLayout.setVisibility(LinearLayout.GONE);
                 } else if (userType.toString().equals("2")) {
-
+                    linearLayout.setVisibility(LinearLayout.VISIBLE);
+                    showUserPositionSoc(documentSnapshot.get("execSoc"), documentSnapshot.get("execSocPosition"));
                 }
 
                 name = documentSnapshot.get("name");
@@ -145,25 +156,31 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                     userNameTextView.setText(name.toString());
                     studyFieldTextView.setText(studyField.toString());
                 }
-
                 showUserBio(documentSnapshot.get("bio"));
                 showUserLikes(documentSnapshot.get("likes"));
                 showUserJoinedSoc(documentSnapshot.get("joinedSociety"));
             }
         });
+    }
 
-        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
-        storageReference.child("User Profile Picture/" + userId).getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Toast.makeText(getContext(), "Download Image Finished...", Toast.LENGTH_SHORT).show();
+    private void showUserPositionSoc(Object execSocObject, Object execPositionSocObject) {
+        if(execSocObject != null) {
+            execSocNameTextView.setText(execSocObject.toString());
+            execPositionTextView.setText(execPositionSocObject.toString());
+        }
 
-                Glide.with(context.getApplicationContext()).load(uri.toString()).bitmapTransform(new RoundedCornersTransformation( getContext(),250, 10)).into(profilePic);
-            }
-        }).addOnFailureListener(new OnFailureListener() {
+        execSocLinearLayout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(@NonNull Exception e) {
-                Toast.makeText(getContext(), "Download Image Failed...", Toast.LENGTH_SHORT).show();
+            public void onClick(View v) {
+                execSocFragment = new ExecSocietyProfileFragment();
+                Bundle arguments = new Bundle();
+                arguments.putString("selectedSocName", execSocNameTextView.getText().toString());
+                execSocFragment.setArguments(arguments);
+
+                FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                transaction.replace(R.id.simpleFrameLayout, execSocFragment);
+                transaction.addToBackStack(null);
+                transaction.commit();
             }
         });
 
@@ -222,16 +239,6 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
         }
 
-    }
-
-    @TargetApi(Build.VERSION_CODES.M)
-    @Override
-    public void onClick(View v) {
-        if (v == editBioButton) {
-            editBioFunction();
-        } else if (v == editLikesButton) {
-            editLikesFunction();
-        }
     }
 
     private void editLikesFunction() {
@@ -440,4 +447,13 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
 
     }
 
+    @TargetApi(Build.VERSION_CODES.M)
+    @Override
+    public void onClick(View v) {
+        if (v == editBioButton) {
+            editBioFunction();
+        } else if (v == editLikesButton) {
+            editLikesFunction();
+        }
+    }
 }
