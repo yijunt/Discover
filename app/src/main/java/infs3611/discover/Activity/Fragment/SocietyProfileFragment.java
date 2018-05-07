@@ -149,7 +149,7 @@ public class SocietyProfileFragment extends Fragment implements View.OnClickList
             }
         });
 
-        ifUserJoinedSoc();
+        ifUserJoinedSoc(false);
     }
 
     private void showUpcomingEvents(Object eventObject, String socName) {
@@ -233,11 +233,11 @@ public class SocietyProfileFragment extends Fragment implements View.OnClickList
             intent.setData(Uri.parse(facebookLink));
             startActivity(intent);
         } else if (v == societyJoinButton) {
-            ifUserJoinedSoc();
+            ifUserJoinedSoc(true);
         }
     }
 
-    private void ifUserJoinedSoc() {
+    private void ifUserJoinedSoc(final boolean buttonFlag) {
 
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
         userId = firebaseUser.getUid();
@@ -253,31 +253,47 @@ public class SocietyProfileFragment extends Fragment implements View.OnClickList
                     joinedSoc = joinedSoc.replace(", ", ",");
                     String[] joinedSocArray = joinedSoc.split(",");
 
-                    joinedSocStringList = Arrays.asList(joinedSocArray);
+                    joinedSocStringList = new ArrayList<>(Arrays.asList(joinedSocArray));
 
                     if (!joinedSocStringList.contains(selectedSoc)) {
-                        joinedSocStringList.add(selectedSoc);
-
-                        firebaseFirestore.collection("Users").document(userId).update("joinedSociety", joinedSocStringList).addOnCompleteListener(new OnCompleteListener<Void>() {
-                            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
-                            @Override
-                            public void onComplete(@NonNull Task<Void> task) {
-                                if (task.isSuccessful()) {
-                                    societyJoinButton.setBackground(ContextCompat.getDrawable(context, R.drawable.peach_button_with_corners));
-                                    societyJoinButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
-                                    societyJoinButton.setText("Joined");
-                                } else {
-                                    String error = task.getException().getMessage();
-                                    //TODO: Change Toast to log
-                                    Toast.makeText(getContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+                        if (buttonFlag) {
+                            joinedSocStringList.add(selectedSoc);
+                            firebaseFirestore.collection("Users").document(userId).update("joinedSociety", joinedSocStringList).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()) {
+                                        societyJoinButton.setBackground(ContextCompat.getDrawable(context, R.drawable.peach_button_with_corners));
+                                        societyJoinButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
+                                        societyJoinButton.setText("Joined");
+                                    } else {
+                                        String error = task.getException().getMessage();
+                                        //TODO: Change Toast to log
+                                        Toast.makeText(getContext(), "Error: " + error, Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                        } else {
+                            societyJoinButton.setBackground(ContextCompat.getDrawable(context, R.drawable.white_background_round));
+                            societyJoinButton.setTextColor(ContextCompat.getColor(context, R.color.colorPeach));
+                            societyJoinButton.setText("Join");
+                        }
                     } else {
                         societyJoinButton.setBackground(ContextCompat.getDrawable(context, R.drawable.peach_button_with_corners));
                         societyJoinButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
                         societyJoinButton.setText("Joined");
-
+                    }
+                } else {
+                    if(buttonFlag) {
+                        //add into database if click join button
+                        firebaseFirestore.collection("Users").document(userId).update("joinedSociety", selectedSoc).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                societyJoinButton.setBackground(ContextCompat.getDrawable(context, R.drawable.peach_button_with_corners));
+                                societyJoinButton.setTextColor(ContextCompat.getColor(context, R.color.colorWhite));
+                                societyJoinButton.setText("Joined");
+                            }
+                        });
                     }
                 }
             }

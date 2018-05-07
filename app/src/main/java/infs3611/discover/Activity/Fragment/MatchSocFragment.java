@@ -56,7 +56,7 @@ public class MatchSocFragment extends Fragment implements View.OnClickListener {
     private ScrollView socDesScrollView;
     private Button addHobbyButton;
     private LinearLayout buttonsLinearLayout;
-    private int currentCount;
+    private int currentCount = 1;
 
     @Nullable
     @Override
@@ -147,11 +147,11 @@ public class MatchSocFragment extends Fragment implements View.OnClickListener {
         });
 
         passSocImageButton.setOnClickListener(this);
+        addSocImageButton.setOnClickListener(this);
 
     }
 
     private void putDataAsView() {
-        currentCount++;
         if (!allSocHashtagMap.isEmpty()) {
             addHobbyButton.setVisibility(View.GONE);
             socDesScrollView.setVisibility(View.VISIBLE);
@@ -164,12 +164,10 @@ public class MatchSocFragment extends Fragment implements View.OnClickListener {
                     socID = documentSnapshot.getId();
                     socIntro = documentSnapshot.get("intro").toString();
                     socDescTextView.setText(socIntro);
-
                     //set picture too...
                 }
             });
         } else {
-
             addHobbyButton.setVisibility(View.VISIBLE);
             socDesScrollView.setVisibility(View.GONE);
             buttonsLinearLayout.setVisibility(View.GONE);
@@ -183,13 +181,24 @@ public class MatchSocFragment extends Fragment implements View.OnClickListener {
 
         if (v == passSocImageButton) {
             allSocHashtagMap.remove(currentCount);
+            currentCount++;
             putDataAsView();
         } else if (v == addHobbyButton) {
-
             //return to userProfile page
             TabLayout tabLayout = UserActivity.tabLayout;
             TabLayout.Tab tab = tabLayout.getTabAt(0);
             tab.select();
+        } else if (v == addSocImageButton) {
+//            String itemValue = (String) socListView.getItemAtPosition(position);
+            SocietyProfileFragment socFragment = new SocietyProfileFragment();
+            Bundle arguments = new Bundle();
+            arguments.putString("selectedSocName", socID);
+            socFragment.setArguments(arguments);
+
+            FragmentTransaction transaction = getFragmentManager().beginTransaction();
+            transaction.replace(R.id.simpleFrameLayout, socFragment);
+            transaction.addToBackStack(null);
+            transaction.commit();
         }
     }
 }

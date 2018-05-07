@@ -29,7 +29,6 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -161,10 +160,15 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                 showUserJoinedSoc(documentSnapshot.get("joinedSociety"));
             }
         });
+        if (socListAdapter != null) {
+            socListAdapter.clear();
+        }
+        socListAdapter = new SocietyAdapter(getContext().getApplicationContext(), socStringList);
+        socListView.setAdapter(socListAdapter);
     }
 
     private void showUserPositionSoc(Object execSocObject, Object execPositionSocObject) {
-        if(execSocObject != null) {
+        if (execSocObject != null) {
             execSocNameTextView.setText(execSocObject.toString());
             execPositionTextView.setText(execPositionSocObject.toString());
         }
@@ -191,30 +195,29 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             String socString = socObject.toString();
             socString = socString.replace("[", "");
             socString = socString.replace("]", "");
-            socArrayString = socString.split(",");
+            socArrayString = socString.split(", ");
+            if (!socString.equals("")) {
+                socStringList.addAll(Arrays.asList(socArrayString));
 
-            socStringList = new ArrayList<String>(Arrays.asList(socArrayString));
+                socListAdapter.notifyDataSetChanged();
+                socListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                    @Override
+                    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                        String itemValue = (String) socListView.getItemAtPosition(position);
 
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_dropdown_item_1line, socStringList);
-            socListAdapter = new SocietyAdapter(getContext(), socStringList);
-            socListView.setAdapter(socListAdapter);
-//            socListView.setAdapter(adapter);
-            socListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    String itemValue = (String) socListView.getItemAtPosition(position);
+                        socFragment = new SocietyProfileFragment();
+                        Bundle arguments = new Bundle();
+                        arguments.putString("selectedSocName", itemValue);
+                        socFragment.setArguments(arguments);
 
-                    socFragment = new SocietyProfileFragment();
-                    Bundle arguments = new Bundle();
-                    arguments.putString("selectedSocName", itemValue);
-                    socFragment.setArguments(arguments);
+                        FragmentTransaction transaction = getFragmentManager().beginTransaction();
+                        transaction.replace(R.id.simpleFrameLayout, socFragment);
+                        transaction.addToBackStack(null);
+                        transaction.commit();
+                    }
+                });
 
-                    FragmentTransaction transaction = getFragmentManager().beginTransaction();
-                    transaction.replace(R.id.simpleFrameLayout, socFragment);
-                    transaction.addToBackStack(null);
-                    transaction.commit();
-                }
-            });
+            }
         }
     }
 
@@ -234,7 +237,6 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
             likesStringList = new ArrayList<String>(Arrays.asList(likesArrayString));
 
             gridViewArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, likesStringList);
-
             likesGridView.setAdapter(gridViewArrayAdapter);
 
         }
@@ -349,7 +351,10 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                         //TODO: check if user alreaady have that hobby!
 
                         likesEditStringList.add(chosenBodyHeader.trim());
-                        editGridViewArrayAdapter.notifyDataSetChanged();
+//                        editGridViewArrayAdapter.notifyDataSetChanged();
+
+                        editGridViewArrayAdapter = new ArrayAdapter<String>(likesContext, android.R.layout.simple_list_item_1, likesEditStringList);
+                        likesEditGridView.setAdapter(editGridViewArrayAdapter);
                         searchLikesDialog.dismiss();
                     }
                 });
@@ -374,7 +379,9 @@ public class UserProfileFragment extends Fragment implements View.OnClickListene
                             public void onComplete(@NonNull Task<Void> task) {
                             }
                         });
-                gridViewArrayAdapter.notifyDataSetChanged();
+                gridViewArrayAdapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, likesStringList);
+                likesGridView.setAdapter(gridViewArrayAdapter);
+
                 likesDialog.dismiss();
             }
         });

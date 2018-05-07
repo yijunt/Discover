@@ -71,7 +71,7 @@ public class SocEventAdapter extends ArrayAdapter<HashMap<String, String>> {
         viewHolder.eventDayTextView.setText(eventSplitMap.get("eventDay"));
         viewHolder.eventNameTextView.setText(eventSplitMap.get("eventName"));
         viewHolder.eventSocTextView.setText(socName);
-        viewHolder.eventPlaceTextView.setText(eventSplitMap.get("eventPlace"));
+        viewHolder.eventPlaceTextView.setText(eventSplitMap.get("eventLocation"));
 
         return convertView;
     }

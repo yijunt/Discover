@@ -340,7 +340,6 @@ public class ExecSocietyProfileFragment extends Fragment implements OnClickListe
                     String[] joinedSocArray = joinedSoc.split(",");
 
                     joinedSocStringList = Arrays.asList(joinedSocArray);
-
                 }
                 if (!joinedSocStringList.contains(selectedSoc)) {
                     joinedSocStringList.add(selectedSoc);

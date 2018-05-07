@@ -67,14 +67,12 @@ public class MessageFragment extends Fragment implements View.OnClickListener {
             String socString = socObject.toString();
             socString = socString.replace("[", "");
             socString = socString.replace("]", "");
-            socArrayString = socString.split(",");
+            socArrayString = socString.split(", ");
 
             socStringList = new ArrayList<String>(Arrays.asList(socArrayString));
 
-            final ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_dropdown_item_1line, socStringList);
             socListAdapter = new MessageGroupAdapter(getContext(), socStringList);
             messageGroupListView.setAdapter(socListAdapter);
-//            socListView.setAdapter(adapter);
             messageGroupListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
